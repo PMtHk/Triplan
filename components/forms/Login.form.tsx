@@ -7,7 +7,6 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 
-
 export function LoginForm() {
   const [isLoading, setIsLoading] = React.useState<boolean>(false)
 
@@ -20,8 +19,12 @@ export function LoginForm() {
     }, 3000)
   }
 
+  const onClick_KAKAO_Login_Btn = () => {
+    window.location.href = `https://kauth.kakao.com/oauth/authorize?client_id=${process.env.NEXT_PUBLIC_KAKAO_REST_API_KEY}&redirect_uri=${process.env.NEXT_PUBLIC_KAKAO_LOGIN_REDIRECT_URI}&response_type=code`
+  }
+
   return (
-    <div className='grid gap-6'>
+    <div className="grid gap-6">
       <form onSubmit={onSubmit}>
         <div className="grid gap-6">
           <div className="grid gap-3">
@@ -50,7 +53,7 @@ export function LoginForm() {
               disabled={isLoading}
             />
           </div>
-          <Button disabled={isLoading} className='bg-emerald-700 hover:bg-emerald-400 hover:text-black'>
+          <Button disabled={isLoading} className="bg-emerald-700 hover:bg-emerald-400 hover:text-black">
             {/* {isLoading && <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />} */}
             이메일로 로그인하기
           </Button>
@@ -64,12 +67,13 @@ export function LoginForm() {
           <span className="bg-background px-2 text-muted-foreground">Or continue with</span>
         </div>
       </div>
-      <Button variant="outline" type="button" disabled={isLoading} className='bg-[#FEE500] border-[#FEE500] hover:border-none'>
-        {/* {isLoading ? (
-          <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
-        ) : (
-          <Icons.gitHub className="mr-2 h-4 w-4" />
-        )}{' '} */}
+      <Button
+        variant="outline"
+        type="button"
+        disabled={isLoading}
+        className="bg-[#FEE500] border-[#FEE500] hover:border-none"
+        onClick={onClick_KAKAO_Login_Btn}
+      >
         카카오로 로그인하기
       </Button>
     </div>
