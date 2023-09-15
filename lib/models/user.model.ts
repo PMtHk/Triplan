@@ -5,7 +5,7 @@ const userSchema = new mongoose.Schema({
   kakao_id: { type: String, required: false, unique: true },
   username: { type: String, required: true },
   name: { type: String, required: true },
-  email: { type: String, required: true },
+  email: { type: String, required: true, unique: true },
   password: { type: String, required: false },
   image_url: { type: String, required: false },
   onboarded: { type: Boolean, default: false },
