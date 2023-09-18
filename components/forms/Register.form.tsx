@@ -8,23 +8,22 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import {
   AlertDialog,
   AlertDialogAction,
-  AlertDialogCancel,
   AlertDialogContent,
   AlertDialogDescription,
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-  AlertDialogTrigger,
 } from '@/components/ui/alert-dialog'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { isEmailExist } from '@/lib/actions/user.actions'
+import { isEmailExist, signup } from '@/lib/actions/user.actions'
 import { RegisterFormValidation } from '@/lib/validations/user'
+import { useRouter } from 'next/navigation'
 
 export function RegisterForm() {
+  const router = useRouter()
+
   const [isLoading, setIsLoading] = React.useState<boolean>(false)
-  const [isDisabled, setIsDisabled] = React.useState<boolean>(true)
   const [isEmailChecked, setIsEmailChecked] = React.useState<boolean>(false)
   const [alert, setAlert] = React.useState<{ isOpen: boolean; message: string }>({
     isOpen: false,
@@ -50,10 +49,20 @@ export function RegisterForm() {
       setIsLoading(false)
       return
     }
+    
+    try {
+      // 회원가입 요청
+      await signup(form.getValues('email'), form.getValues('password'), form.getValues('nickname'))
 
-    setTimeout(() => {
+      router.push('/sign-in')
+
+    } catch (error: any) {
       setIsLoading(false)
-    }, 3000)
+      setAlert({
+        isOpen: true,
+        message: '회원가입에 실패했습니다. 잠시 후, 다시 시도해주세요.',
+      })
+    }
   }
 
   // 카카오로 회원가입 버튼 클릭
@@ -63,7 +72,7 @@ export function RegisterForm() {
 
   // 이메일 중복확인 버튼 클릭
   const onClick_Check_Email_Btn = async (event: React.MouseEvent) => {
-    event.preventDefault()
+    // event.preventDefault()
 
     const isExist = await isEmailExist(form.getValues('email'))
 
@@ -113,6 +122,7 @@ export function RegisterForm() {
                         type="button"
                         onClick={onClick_Check_Email_Btn}
                         disabled={!EmailRegex.test(form.getValues('email'))}
+                        className='w-[90px] hover:bg-slate-300 hover:text-black'
                       >
                         중복확인
                       </Button>

@@ -1,6 +1,6 @@
 import mongoose from 'mongoose'
 
-let isConnected = false // variable to check if mongoose is connected
+let isConnected = false // Variable to check if mongoose is connected
 
 export const connectToDB = async () => {
   mongoose.set('strictQuery', true)
@@ -12,7 +12,20 @@ export const connectToDB = async () => {
     await mongoose.connect(process.env.MONGODB_URL)
     isConnected = true
     console.log('Connected to MongoDB')
-  } catch (error) {
+  } catch (error: any) {
+    console.log(error)
+  }
+}
+
+// Use it when necessary
+export const disconnectFromDB = async () => {
+  if (!isConnected) return;
+
+  try {
+    await mongoose.connection.close()
+    isConnected = false
+    console.log('Disconnected from MongoDB')
+  } catch (error: any) {
     console.log(error)
   }
 }

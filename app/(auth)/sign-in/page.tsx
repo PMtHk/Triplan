@@ -3,7 +3,7 @@ import Link from 'next/link'
 import { LoginForm } from '@/components/forms/Login.form'
 import TriplanLogo from '@/public/assets/triplan_logo.png'
 
-export default function AuthenticationPage() {
+export default function Page() {
   return (
     <div className="container relative h-[800px] flex flex-col items-center justify-center md:grid lg:max-w-none lg:grid-cols-2 lg:px-0 lg:border-emerald-700 lg:border-2">
       <div className="relative hidden w-full h-full flex-col bg-muted p-10 text-white dark:border-r lg:flex">
