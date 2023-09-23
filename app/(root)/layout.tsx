@@ -1,3 +1,4 @@
+import RecoilRootWrapper from '@/components/RecoilRootWrapper'
 import '../globals.css'
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
@@ -9,23 +10,19 @@ export const metadata: Metadata = {
   description: 'Go on a trip right now',
 }
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="ko">
       <body className={inter.className}>
-        {/* TODO: TopNavbar */}
-        <main className='container'>
-          {/* TODO: LeftSidebar */}
-          <div className='w-full'>
-            {children}
-          </div>
-          {/* TODO: LeftSidebar */}
-        </main>
-        {/* TODO: BottomNavbar */}
+        <RecoilRootWrapper>
+          {/* TODO: TopNavbar */}
+          <main className="container">
+            {/* TODO: LeftSidebar */}
+            <div className="w-full">{children}</div>
+            {/* TODO: LeftSidebar */}
+          </main>
+          {/* TODO: BottomNavbar */}
+        </RecoilRootWrapper>
       </body>
     </html>
   )

@@ -23,11 +23,7 @@ export async function isEmailExist(email: string) {
 
 export async function signup(email: string, password: string, username: string) {
   try {
-    await connectToDB();
-
-    // TODO: Hash Password 
-
-    const encryptedPassword = password+'123';
+    await connectToDB()
 
     // Create User
     const result = await User.create({
@@ -40,5 +36,28 @@ export async function signup(email: string, password: string, username: string) 
     console.log(result)
   } catch (error: any) {
     throw new Error(`회원가입에 실패했습니다. : ${error.message}`)
+  }
+}
+
+export async function signin_email(email: string, password: string) {
+  try {
+    await connectToDB()
+
+    // Find User with email
+    await User.findOne({
+      email: email,
+    }).then((targetUser) => {
+      if (!targetUser) throw new Error('가입한 이메일이 아닙니다.')
+
+      // Check Password
+      targetUser.comparePassword(password, function (error: any, isMatch: boolean) {
+        if (error) throw new Error('로그인 시도 중 오류가 발생했습니다.')
+        if (!isMatch) throw new Error('비밀번호가 일치하지 않습니다.')
+
+        // TODO: Generate JWT Token and return to client
+      })
+    })
+  } catch (error: any) {
+    throw new Error(`로그인에 실패했습니다. : ${error.message}`)
   }
 }

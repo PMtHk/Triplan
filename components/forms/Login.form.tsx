@@ -1,22 +1,62 @@
 'use client'
 
 import * as React from 'react'
-
-import { cn } from '@/lib/utils'
+import * as z from 'zod'
+import { useRouter } from 'next/navigation'
+import { useForm } from 'react-hook-form'
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { LoginFormValidation } from '@/lib/validations/user'
+import { signin_email } from '@/lib/actions/user.actions'
 
 export function LoginForm() {
+  const router = useRouter();
+  
   const [isLoading, setIsLoading] = React.useState<boolean>(false)
+  const [alert, setAlert] = React.useState<{ isOpen: boolean; title: string; message: string; onClick: () => void }>({
+    isOpen: false,
+    title: '',
+    message: '',
+    onClick: () => {},
+  })
 
-  async function onSubmit(event: React.SyntheticEvent) {
-    event.preventDefault()
+  const form = useForm({
+    resolver: zodResolver(LoginFormValidation),
+    defaultValues: {
+      email: '',
+      password: '',
+    },
+  })
+
+  async function onSubmit(values: z.infer<typeof LoginFormValidation>) {
     setIsLoading(true)
 
-    setTimeout(() => {
+    try {
+      // 로그인 요청
+      await signin_email(form.getValues('email'), form.getValues('password'))
+
       setIsLoading(false)
-    }, 3000)
+      router.push('/')
+    } catch (error:any) {
+      setIsLoading(false);
+      setAlert({
+        isOpen: true,
+        title: '로그인 실패',
+        message: error.message,
+        onClick: () => { setAlert({...alert, isOpen: false})}
+      })
+    }
   }
 
   const onClick_KAKAO_Login_Btn = () => {
@@ -24,41 +64,43 @@ export function LoginForm() {
   }
 
   return (
-    <div className="grid gap-6">
-      <form onSubmit={onSubmit}>
-        <div className="grid gap-6">
-          <div className="grid gap-3">
-            <Label className="sr-only" htmlFor="email">
-              Email
-            </Label>
-            <Input
-              id="email"
-              placeholder="이메일을 입력하세요."
-              type="email"
-              autoCapitalize="none"
-              autoComplete="email"
-              autoCorrect="off"
-              disabled={isLoading}
-            />
-            <Label className="sr-only" htmlFor="password">
-              Email
-            </Label>
-            <Input
-              id="password"
-              placeholder="패스워드를 입력하세요."
-              type="password"
-              autoCapitalize="none"
-              autoComplete="password"
-              autoCorrect="off"
-              disabled={isLoading}
-            />
+    <div className="grid gap-6 w-full">
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)}>
+          <div className="grid gap-6">
+            <div className="grid gap-3">
+              <FormField
+                control={form.control}
+                name="email"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>이메일</FormLabel>
+                    <FormControl>
+                      <Input type="email" {...field} />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="password"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>비밀번호</FormLabel>
+                    <FormControl>
+                      <Input type="password" {...field} />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+            </div>
+            <Button type="submit" disabled={isLoading} className="bg-emerald-700 hover:bg-emerald-400 hover:text-black">
+              이메일로 로그인하기
+            </Button>
           </div>
-          <Button disabled={isLoading} className="bg-emerald-700 hover:bg-emerald-400 hover:text-black">
-            {/* {isLoading && <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />} */}
-            이메일로 로그인하기
-          </Button>
-        </div>
-      </form>
+        </form>
+      </Form>
+
       <div className="relative">
         <div className="absolute inset-0 flex items-center">
           <span className="w-full border-t" />
@@ -76,6 +118,18 @@ export function LoginForm() {
       >
         카카오로 로그인하기
       </Button>
+
+      <AlertDialog open={alert.isOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>{alert.title}</AlertDialogTitle>
+            <AlertDialogDescription>{alert.message}</AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogAction onClick={alert.onClick}>확인</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   )
 }

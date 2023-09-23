@@ -7,6 +7,12 @@ export const UserValidation = z.object({
   bio: z.string().min(3).max(1000),
 })
 
+export const LoginFormValidation = z
+  .object({
+    email: z.string().email({ message: '올바른 이메일 형식이 아닙니다.' }).nonempty(),
+    password: z.string().min(8).max(30).nonempty(),
+  })
+
 export const RegisterFormValidation = z
   .object({
     email: z.string().email({ message: '올바른 이메일 형식이 아닙니다.' }).nonempty(),

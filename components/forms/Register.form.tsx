@@ -25,9 +25,11 @@ export function RegisterForm() {
 
   const [isLoading, setIsLoading] = React.useState<boolean>(false)
   const [isEmailChecked, setIsEmailChecked] = React.useState<boolean>(false)
-  const [alert, setAlert] = React.useState<{ isOpen: boolean; message: string }>({
+  const [alert, setAlert] = React.useState<{ isOpen: boolean; title: string; message: string; onClick: () => void }>({
     isOpen: false,
+    title: '',
     message: '',
+    onClick: () => {},
   })
 
   const form = useForm({
@@ -49,18 +51,28 @@ export function RegisterForm() {
       setIsLoading(false)
       return
     }
-    
+
     try {
       // 회원가입 요청
       await signup(form.getValues('email'), form.getValues('password'), form.getValues('nickname'))
 
-      router.push('/sign-in')
-
+      setAlert({
+        isOpen: true,
+        title: '회원가입 성공',
+        message: '회원가입에 성공했습니다. 로그인 페이지로 이동합니다.',
+        onClick: () => {
+          router.push('/sign-in')
+        },
+      })
     } catch (error: any) {
       setIsLoading(false)
       setAlert({
         isOpen: true,
+        title: '회원가입 실패',
         message: '회원가입에 실패했습니다. 잠시 후, 다시 시도해주세요.',
+        onClick: () => {
+          setAlert({ ...alert, isOpen: false })
+        },
       })
     }
   }
@@ -81,20 +93,28 @@ export function RegisterForm() {
       setIsEmailChecked(false)
       setAlert({
         isOpen: true,
+        title: '중복된 이메일',
         message: '이미 가입한 이메일입니다. 다른 이메일 주소를 입력해주세요.',
+        onClick: () => {
+          setAlert({ ...alert, isOpen: false })
+        },
       })
     } else {
       // 중복 이메일 존재하지 않음 - 사용 가능 이메일
       setIsEmailChecked(true)
       setAlert({
         isOpen: true,
+        title: '사용 가능한 이메일',
         message: '사용 가능한 이메일입니다.',
+        onClick: () => {
+          setAlert({ ...alert, isOpen: false })
+        },
       })
     }
   }
 
   // 이메일 검증 정규식
-  const EmailRegex =/^[0-9a-zA-Z]([-_\.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_\.]?[0-9a-zA-Z])*\.[a-zA-Z]{2,3}$/i
+  const EmailRegex = /^[0-9a-zA-Z]([-_\.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_\.]?[0-9a-zA-Z])*\.[a-zA-Z]{2,3}$/i
 
   return (
     <div className="grid gap-6 w-full">
@@ -105,8 +125,8 @@ export function RegisterForm() {
               control={form.control}
               name="email"
               render={({ field }) => (
-                <FormItem className="">
-                  <FormLabel className="">* 이메일</FormLabel>
+                <FormItem>
+                  <FormLabel>* 이메일</FormLabel>
                   <FormControl>
                     <div className="flex flex-row">
                       <Input
@@ -122,7 +142,7 @@ export function RegisterForm() {
                         type="button"
                         onClick={onClick_Check_Email_Btn}
                         disabled={!EmailRegex.test(form.getValues('email'))}
-                        className='w-[90px] hover:bg-slate-300 hover:text-black'
+                        className="w-[90px] hover:bg-slate-300 hover:text-black"
                       >
                         중복확인
                       </Button>
@@ -208,11 +228,11 @@ export function RegisterForm() {
       <AlertDialog open={alert.isOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>이메일 중복 확인</AlertDialogTitle>
+            <AlertDialogTitle>{alert.title}</AlertDialogTitle>
             <AlertDialogDescription>{alert.message}</AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogAction onClick={() => setAlert({ isOpen: false, message: '' })}>확인</AlertDialogAction>
+            <AlertDialogAction onClick={alert.onClick}>확인</AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
