@@ -5,18 +5,21 @@ import { generateAccess, generateRefresh, verifyRefresh } from '@/lib/jwt'
 import Token from '@/lib/models/token.model'
 import User from '@/lib/models/user.model'
 import { connectToDB } from '@/lib/mongoose'
-import { NextApiRequest, NextApiResponse } from 'next'
+import { NextRequest, NextResponse } from 'next/server'
 
 const REFRESH_DURATION = 60 * 60 * 24 * 1000 * 14
 
-export async function GET(req: NextApiRequest, res: NextApiResponse) {
+export async function GET(req: NextRequest) {
   try {
     // Connect to MongoDB
     connectToDB()
 
+    let res = null
+
     // Get refreshToken from HTTPOnly cookie
-    let refreshToken = req.headers.cookie
-    if (refreshToken) {
+    let refreshToken = req.cookies.get('refreshToken') || ''
+
+    if (refreshToken !== '') {
       // Find User_id with refreshToken
       const user_id = await Token.findOne({
         refreshToken: refreshToken,
@@ -31,7 +34,7 @@ export async function GET(req: NextApiRequest, res: NextApiResponse) {
       const newAccessToken = generateAccess(user._id, user.username, user.image_url)
 
       // Check RefreshToken expiration
-      if (!verifyRefresh(refreshToken)) {
+      if (!verifyRefresh(refreshToken.toString())) {
         // When refreshToken is expired
         // Generate New Refresh
         refreshToken = generateRefresh(user._id)
@@ -47,34 +50,46 @@ export async function GET(req: NextApiRequest, res: NextApiResponse) {
         )
 
         // Set new refreshToken to HTTPOnly cookie
-        res.setHeader(
-          'Set-Cookie',
-          `refreshToken=${refreshToken}; Path=/; Expires=${new Date(
-            Date.now() + REFRESH_DURATION,
-          ).toUTCString()}; HttpOnly;`,
+        res = NextResponse.json(
+          {
+            serviceCode: 'SUCCESS_REFRESH',
+            message: '성공적으로 토큰을 갱신했습니다.',
+            accessToken: newAccessToken,
+          },
+          { status: 200 },
         )
-      }
 
-      // Return new access token
-      res.statusCode = 200
-      return res.json({
-        serviceCode: 'SUCCESS_REFRESH',
-        message: '성공적으로 토큰을 갱신했습니다.',
-        accessToken: newAccessToken,
-      })
+        res.cookies.set({
+          name: 'refreshToken',
+          value: refreshToken,
+          path: '/',
+          expires: new Date(Date.now() + REFRESH_DURATION),
+          httpOnly: true,
+        })
+
+        // Return new access token
+        return res
+      }
     }
 
     // When refreshToken is not exist
-    res.statusCode = 400
-    return res.json({
-      serviceCode: 'ERROR_NO_REFRESH_TOKEN',
-      message: '리프레시 토큰이 불러오지 못했습니다. 다시 로그인해주세요.',
-    })
+
+    res = NextResponse.json(
+      {
+        serviceCode: 'INFO_NOT_LOGGED_IN',
+        message: '로그인 상태가 아닙니다.',
+      },
+      { status: 200 },
+    )
+
+    return res
   } catch (error: any) {
-    res.statusCode = 500
-    return res.json({
-      serviceCode: 'ERROR_REFRESH',
-      message: '토큰 갱신 중 오류가 발생했습니다.',
-    })
+    return NextResponse.json(
+      {
+        serviceCode: 'ERROR_REFRESH',
+        message: '토큰 갱신 중 오류가 발생했습니다.',
+      },
+      { status: 500 },
+    )
   }
 }

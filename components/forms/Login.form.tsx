@@ -21,8 +21,8 @@ import { LoginFormValidation } from '@/lib/validations/user'
 import { signin_email } from '@/lib/actions/user.actions'
 
 export function LoginForm() {
-  const router = useRouter();
-  
+  const router = useRouter()
+
   const [isLoading, setIsLoading] = React.useState<boolean>(false)
   const [alert, setAlert] = React.useState<{ isOpen: boolean; title: string; message: string; onClick: () => void }>({
     isOpen: false,
@@ -44,17 +44,37 @@ export function LoginForm() {
 
     try {
       // 로그인 요청
-      await signin_email(form.getValues('email'), form.getValues('password'))
+      // await signin_email(form.getValues('email'), form.getValues('password'))
+
+      const response: any = await fetch('http://localhost:3000/api/auth/signin', {
+        method: 'POST',
+        body: JSON.stringify({
+          email: form.getValues('email'),
+          password: form.getValues('password'),
+        }),
+      })
+
+      const responseBody = await response.json()
+      const { serviceCode, message } = responseBody
+
+      console.log(serviceCode, message)
+
+      if (!response.ok) throw new Error(message)
 
       setIsLoading(false)
-      router.push('/')
-    } catch (error:any) {
-      setIsLoading(false);
-      setAlert({
-        isOpen: true,
-        title: '로그인 실패',
-        message: error.message,
-        onClick: () => { setAlert({...alert, isOpen: false})}
+      // router.push('/')
+    } catch (error: any) {
+      console.log(123)
+      setIsLoading(false)
+      setAlert(() => {
+        return {
+          isOpen: true,
+          title: '로그인 실패',
+          message: error.message,
+          onClick: () => {
+            setAlert({ ...alert, isOpen: false })
+          },
+        }
       })
     }
   }
@@ -114,7 +134,16 @@ export function LoginForm() {
         type="button"
         disabled={isLoading}
         className="bg-[#FEE500] border-[#FEE500] hover:border-none"
-        onClick={onClick_KAKAO_Login_Btn}
+        onClick={() => {
+          setAlert({
+            isOpen: true,
+            title: '로그인 실패',
+            message: '아직 준비중인 기능입니다.',
+            onClick: () => {
+              setAlert({ ...alert, isOpen: false })
+            },
+          })
+        }}
       >
         카카오로 로그인하기
       </Button>

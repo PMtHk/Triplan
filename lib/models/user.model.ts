@@ -42,12 +42,9 @@ userSchema.pre('save', function (next) {
   }
 })
 
-userSchema.methods.comparePassword = function (plainPassword: string, callback: any) {
+userSchema.methods.comparePassword = async function (plainPassword: string) {
   // Comepare plain password with hashed password
-  bcrypt.compare(plainPassword, this.password, function(error: any, isMatch: boolean) {
-    if (error) return callback(error);
-    callback(null, isMatch);
-  })
+  return bcrypt.compare(plainPassword, this.password)
 }
 
 const User = mongoose.models.User || mongoose.model('User', userSchema)
