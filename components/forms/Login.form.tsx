@@ -44,25 +44,10 @@ export function LoginForm() {
 
     try {
       // 로그인 요청
-      // await signin_email(form.getValues('email'), form.getValues('password'))
-
-      const response: any = await fetch('http://localhost:3000/api/auth/signin', {
-        method: 'POST',
-        body: JSON.stringify({
-          email: form.getValues('email'),
-          password: form.getValues('password'),
-        }),
-      })
-
-      const responseBody = await response.json()
-      const { serviceCode, message } = responseBody
-
-      console.log(serviceCode, message)
-
-      if (!response.ok) throw new Error(message)
+      await signin_email(form.getValues('email'), form.getValues('password'))
 
       setIsLoading(false)
-      // router.push('/')
+      router.push('/')
     } catch (error: any) {
       console.log(123)
       setIsLoading(false)

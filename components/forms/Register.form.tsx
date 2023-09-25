@@ -16,7 +16,7 @@ import {
 } from '@/components/ui/alert-dialog'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { isEmailExist, signup } from '@/lib/actions/user.actions'
+import { isEmailExist, signup_email } from '@/lib/actions/user.actions'
 import { RegisterFormValidation } from '@/lib/validations/user'
 import { useRouter } from 'next/navigation'
 
@@ -54,7 +54,7 @@ export function RegisterForm() {
 
     try {
       // 회원가입 요청
-      await signup(form.getValues('email'), form.getValues('password'), form.getValues('nickname'))
+      await signup_email(form.getValues('email'), form.getValues('password'), form.getValues('nickname'))
 
       setAlert({
         isOpen: true,
