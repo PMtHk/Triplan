@@ -14,7 +14,7 @@ export default function Page() {
                   alt="triplan_logo"
                   width={36}
                   height={36}
-                  className="lg:group-hover:animate-logo-around"
+                  className="max-lg:animate-logo-around-repeat lg:group-hover:animate-logo-around"
                 />
                 <span className="ml-2 text-xl font-bold text-emerald-700 italic ">Triplan.</span>
               </div>

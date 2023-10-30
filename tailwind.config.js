@@ -65,20 +65,32 @@ module.exports = {
         'accordion-down': 'accordion-down 0.2s ease-out',
         'accordion-up': 'accordion-up 0.2s ease-out',
         'logo-around': 'logo-around 1.5s linear',
+        'logo-around-repeat': 'logo-around 15s linear infinite',
       },
       keyframes: {
         'logo-around': {
           '0%': {},
-          '20%': {
+          '5%': {
             transform: 'rotate(45deg)',
           },
-          '25%': {
+          '6%': {
             opacity: '1',
             transform: 'rotate(45deg)',
           },
-          '100%': {
+          '10%': {
             opacity: '0',
             transform: 'rotate(45deg) translate(60px, -60px)',
+          },
+          '11%': {
+            opacity: '0',
+            transform: 'rotate(45deg) translate(60px, -60px)',
+          },
+          '11%': {
+            opacity: '0',
+            transform: 'rotate(0) translate(0, 0)',
+          },
+          '12%': {
+            opacity: '1',
           },
         },
       },
