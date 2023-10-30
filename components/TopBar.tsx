@@ -3,7 +3,7 @@ import Link from 'next/link'
 
 export default function Page() {
   return (
-    <header className="w-full bg-gradient-to-l from-emerald-700 to-emerald-600 h-16 drop-shadow-2xl sticky top-0 flex justify-center items-center">
+    <header className="w-full bg-gradient-to-tl from-emerald-600 to-teal-700 h-16 drop-shadow-2xl sticky top-0 flex justify-center items-center">
       <div className="w-full px-5 max-w-6xl flex items-center justify-between">
         <h1 className="grow-0 shrink-0">
           <a href="/" className="group">
@@ -27,7 +27,7 @@ export default function Page() {
               <Link href="trips">여행</Link>
             </li>
             <li className="lg:hover:scale-[1.1] transition-all lg:hover:bg-emerald-600/90 p-1 rounded-xl">
-              <Link href="calender">일정</Link>
+              <Link href="calender">캘린더</Link>
             </li>
             <li className="lg:hover:scale-[1.1] transition-all lg:hover:bg-emerald-600/90 p-1 rounded-xl">
               <Link href="favorites">관심목록</Link>
