@@ -115,6 +115,11 @@ export async function signin_email(email: string, password: string) {
   }
 }
 
+// TODO: Kakao login
+export async function signin_kakao(code: string) {}
+
+// TODO: Naver login
+
 export async function logout() {
   try {
     // Connect to MongoDB
