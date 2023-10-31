@@ -1,7 +1,15 @@
-import Image from 'next/image'
+'use client'
+
 import Link from 'next/link'
+import Image from 'next/image'
+import { usePathname, useRouter } from 'next/navigation'
+
+import { menus } from '@/constants/menu'
 
 export default function Page() {
+  const router = useRouter()
+  const pathname = usePathname()
+
   return (
     <header className="w-full bg-gradient-to-tl from-emerald-600 to-teal-700 h-16 drop-shadow-2xl sticky top-0 flex justify-center items-center">
       <div className="w-full px-5 max-w-6xl flex items-center justify-between">
@@ -23,15 +31,19 @@ export default function Page() {
         </h1>
         <nav className="hidden lg:block pl-4 grow-1 ">
           <ul className="flex gap-8 text-slate-50 text-lg">
-            <li className="lg:hover:scale-[1.1] transition-all lg:hover:bg-emerald-600/90 p-1 rounded-xl">
-              <Link href="trips">여행</Link>
-            </li>
-            <li className="lg:hover:scale-[1.1] transition-all lg:hover:bg-emerald-600/90 p-1 rounded-xl">
-              <Link href="calender">캘린더</Link>
-            </li>
-            <li className="lg:hover:scale-[1.1] transition-all lg:hover:bg-emerald-600/90 p-1 rounded-xl">
-              <Link href="favorites">관심목록</Link>
-            </li>
+            {menus.map((menu) => {
+              const isActive = (pathname.includes(menu.route) && menu.route.length > 1) || pathname === menu.route
+
+              // TODO: Add active class
+              return (
+                <li
+                  key={menu.label}
+                  className="lg:hover:scale-[1.1] transition-all lg:hover:bg-emerald-600/90 p-1 rounded-xl"
+                >
+                  <Link href={menu.route}>{menu.label_kor}</Link>
+                </li>
+              )
+            })}
           </ul>
         </nav>
       </div>
