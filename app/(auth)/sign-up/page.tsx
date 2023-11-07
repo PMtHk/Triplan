@@ -2,6 +2,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { RegisterForm } from '@/components/forms/Register.form'
 import TriplanLogo from '@/public/assets/triplan_logo.png'
+import AnimatePanel from '@/components/animtate/sign-up'
 
 export default function Page() {
   return (
@@ -21,27 +22,7 @@ export default function Page() {
           </Link>
         </div>
       </div>
-      <div className="relative hidden w-full h-full flex-col bg-muted p-10 text-white dark:border-r lg:flex">
-        <div className="absolute inset-0 bg-emerald-700" />
-        <div className="relative z-20 flex items-center text-4xl font-medium justify-end">
-          <span className="mr-2">TriPlan</span>
-          <Image className="relative" src={TriplanLogo} alt="triplan_logo" width={40} height={40} />
-        </div>
-        <div className="relative z-20 mt-auto">
-          <blockquote className="space-y-2">
-            <p className="text-2xl">
-              &ldquo;여행은 모든 세대를 통틀어 가장 잘 알려진 예방약이자 치료제이며 동시에 회복제이다.&rdquo;
-            </p>
-            <footer className="text-sm">Daniel Drake (1785-1852)</footer>
-          </blockquote>
-          <blockquote className="space-y-2 mt-8">
-            <p className="text-2xl">
-              &ldquo;여행이란, 우리가 사는 장소를 바꿔주는 것이 아니라 우리의 생각과 편견을 바꿔주는 것이다.&rdquo;
-            </p>
-            <footer className="text-sm">Anatole France (1844-1924)</footer>
-          </blockquote>
-        </div>
-      </div>
+      <AnimatePanel />
     </div>
   )
 }
